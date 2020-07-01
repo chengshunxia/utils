@@ -93,10 +93,10 @@ function create_virtenv()
  	_root_dir=$1
 	_sdk_version=$2
 	dir_not_exist $_dir
-	_dir=${_root_dir}/virtenv
+	_dir=${_root_dir}/virtenv/${_sdk_version}
 	rmdir_or_die ${_dir}
 	mkdir_or_die ${_dir}
-	virtualenv -p /usr/bin/python3 $_dir/${_sdk_version}
+	virtualenv -p /usr/bin/python3 ${_dir}
 	success_or_die "create virtualenv failed"
 }
 
