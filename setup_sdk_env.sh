@@ -3,8 +3,8 @@ SDK_ROOT_DIR=/mnt/data/xiachengshun
 ENV_PREFIX="export GCDA_MONITOR=1
 export TF_CPP_VMODULE='poplar_compiler=1,poplar_executable=1'
 export TF_CPP_VMODULE='poplar_compiler=1'
-export TF_POPLAR_FLAGS='--max_compilation_threads=40 --executable_cache_path=/mnt/data/__username__/cachedir'
-export TMPDIR='/mnt/data/__username__/tmp'"
+export TF_POPLAR_FLAGS='--max_compilation_threads=40 --executable_cache_path=/__user_home__/cachedir'
+export TMPDIR='/__user_home__/tmp'"
 
 function usage() 
 {
@@ -133,8 +133,7 @@ EOF
 		echo "source  $file"
 	done >> ${_file}
 
-	_current_user=${USER}
-	sed -i "s/__username__/${_current_user}/" ${_file}
+	sed -i "s#__user_home__#${SDK_ROOT_DIR}#" ${_file}
 	
 	printf "Please source ${_file} to start\n" %{_file}
 }
