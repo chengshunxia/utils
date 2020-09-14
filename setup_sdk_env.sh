@@ -150,7 +150,7 @@ fi
 
 _tarball_name=$(basename $tarball)
 _sdk_dir=$(echo $_tarball_name | sed -e 's/\.tar.gz//' -e 's/\.tar//')
-_sdk_version=$(echo $_tarball_name | awk -F '-' '{printf ("%s-%s",$3,$4)}')
+_sdk_version=$(echo $_tarball_name | awk -F '-' '{printf ("%s-%s",$3,$4)}' | sed 's#.tar.gz##')
 
 #untar the sdk
 untar_sdk $tarball $SDK_ROOT_DIR
