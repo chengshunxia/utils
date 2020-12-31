@@ -1,5 +1,5 @@
 #!/bin/bash 
-SDK_ROOT_DIR=/mnt/data/xiachengshun
+SDK_ROOT_DIR=/data/home/xiachengshun
 ENV_PREFIX="export GCDA_MONITOR=1
 export TF_CPP_VMODULE='poplar_compiler=1,poplar_executable=1'
 export TF_CPP_VMODULE='poplar_compiler=1'
@@ -88,15 +88,49 @@ function rm_file_or_die()
 	fi  
 }
 
+function check_os_match()
+{
+	_tarball=$1
+	local tarball_os_version
+	local os_release
+	if echo $_tarball | grep centos -i 2>&1 >/dev/null;then
+	  tarball_os_version="centos"
+	elif echo $_tarball | grep ubuntu -i 2>&1 >/dev/null;then
+	  tarball_os_version="ubuntu"
+	else
+	  tarball_os_version="unknown"
+	fi
+
+	if cat /etc/*-release | grep centos -i 2>&1 >/dev/null;then
+	  os_release="centos"
+	elif cat /etc/*-release | grep ubuntu -i 2>&1 >/dev/null;then
+	  os_release="ubuntu"
+	else
+	  os_release="unknown"
+	fi
+	if [ $tarball_os_version != $os_release ];then
+	  printf "tarball release :%s don't matach os_release: %s\n" "$tarball_os_version" "$os_release"
+	  printf "please check\n"
+	  exit 1
+	fi
+}
+
 function create_virtenv()
 {
  	_root_dir=$1
 	_sdk_version=$2
 	dir_not_exist $_dir
 	_dir=${_root_dir}/virtenv/${_sdk_version}
+	if cat /etc/*-release | grep CentOS -i 2>&1 >/dev/null ; then
+	  _dir=${_dir}_centos
+	fi
 	rmdir_or_die ${_dir}
 	mkdir_or_die ${_dir}
-	virtualenv -p /usr/bin/python3 ${_dir}
+	virtualenv_cmd="virtualenv"
+	if cat /etc/*-release | grep centos -i 2>&1 >/dev/null;then
+	  virtualenv_cmd="virtualenv-3"
+	fi
+	${virtualenv_cmd} -p /usr/bin/python3 ${_dir}
 	success_or_die "create virtualenv failed"
 }
 
@@ -119,6 +153,9 @@ function create_sdk_envs()
 	dir_not_exist $_root_dir
 	_dir=${_root_dir}/cfgs
 	mkdir_or_die ${_dir}
+	if cat /etc/*-release | grep CentOS -i 2>&1 >/dev/null ; then
+	  _sdk_version=${_sdk_version}_centos
+	fi
 	_file=${_dir}/gc.env.sdk.${_sdk_version}
 	rm_file_or_die ${_file}
 	touch ${_file}
@@ -151,6 +188,8 @@ fi
 _tarball_name=$(basename $tarball)
 _sdk_dir=$(echo $_tarball_name | sed -e 's/\.tar.gz//' -e 's/\.tar//')
 _sdk_version=$(echo $_tarball_name | awk -F '-' '{printf ("%s-%s",$3,$4)}' | sed 's#.tar.gz##')
+
+check_os_match $tarball
 
 #untar the sdk
 untar_sdk $tarball $SDK_ROOT_DIR
