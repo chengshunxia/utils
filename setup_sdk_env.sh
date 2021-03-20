@@ -1,8 +1,6 @@
 #!/bin/bash 
 SDK_ROOT_DIR=/localdata/xiachengshun
 ENV_PREFIX="export GCDA_MONITOR=1
-export TF_CPP_VMODULE='poplar_compiler=1,poplar_executable=1'
-export TF_CPP_VMODULE='poplar_compiler=1'
 export TF_POPLAR_FLAGS='--executable_cache_path=/__user_home__/cachedir'
 export TMPDIR='/__user_home__/tmp'"
 
