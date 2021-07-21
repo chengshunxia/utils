@@ -1,5 +1,5 @@
 #!/bin/bash 
-SDK_ROOT_DIR=/localdata/xiachengshun
+SDK_ROOT_DIR=/home/xiachengshun
 ENV_PREFIX="export GCDA_MONITOR=1
 export TF_POPLAR_FLAGS='--executable_cache_path=/__user_home__/cachedir'
 export TMPDIR='/__user_home__/tmp'"
@@ -185,7 +185,7 @@ if [ ! -f $tarball ] ;then
 fi
 
 _tarball_name=$(basename $tarball)
-_sdk_dir=$(echo $_tarball_name | sed -e 's/\.tar.gz//' -e 's/\.tar//')
+_sdk_dir=$(tar ztf $_tarball_name | head -1)
 _sdk_version=$(echo $_tarball_name | awk -F '-' '{printf ("%s-%s",$3,$4)}' | sed 's#.tar.gz##')
 
 check_os_match $tarball
